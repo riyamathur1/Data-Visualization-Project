@@ -30,6 +30,7 @@ footer, header, hgroup, menu, nav, section {
 
 body {
 	line-height: 1;
+    background-color: #00008B; /* Dark blue background */
 }
 
 ol, ul {
@@ -70,6 +71,9 @@ input, select, textarea {
 	-ms-appearance: none;
 	appearance: none;
 }
+
+/* The rest of your CSS code... */
+
 
 /* Basic */
 
