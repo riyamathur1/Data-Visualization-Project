@@ -1,101 +1,430 @@
 <!DOCTYPE HTML>
 <!--
-	Hyperspace by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+    Hyperspace by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
 <html>
-	<head>
-		<title>Visualizing Police Shootings Across the United States</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-	</head>
-	<body class="is-preload">
+    <head>
+        <title>Visualizing Police Shootings Across the United States</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="stylesheet" href="assets/css/main.css" />
+        <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
 
-		<!-- Wrapper -->
-			<div id="wrapper">
 
-				<!-- Intro -->
-					<section id="intro" class="wrapper style1 fullscreen fade-up">
+        <style>
+            /* Tooltip and Visualization styling for line charts */
+            .tooltip, .tooltip-pie {
+                position: absolute;
+                text-align: center;
+                width: auto;
+                height: auto;
+                padding: 6px;
+                font: 12px sans-serif;
+                background: lightsteelblue;
+                border: 0px;
+                border-radius: 8px;
+                pointer-events: none;
+                opacity: 0;
+            }
+            .svg-container {
+                padding: 10px;
+                display: inline-block;
+                margin: 0 auto;
+            }
+            .axis-label {
+                font-weight: bold;
+            }
+            .line {
+                fill: none;
+                stroke: #3074b2;
+                stroke-width: 2;
+            }
+            .dot {
+                fill: #3074b2;
+                opacity: 0.7;
+            }
+            .title {
+                font-size: 16px;
+            }
+
+            /* Styling for pie charts */
+            .chart-container {
+                display: inline-block;
+                vertical-align: top;
+                margin-right: 20px;
+                margin-bottom: 20px;
+                padding: 20px;
+            }
+            .tooltip-pie {
+                background: white;
+                border: 1px solid #ccc;
+                box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+                z-index: 10;
+            }
+            text {
+                font-size: 12px;
+                text-anchor: middle;
+            }
+            .slice {
+                stroke: white;
+                stroke-width: 1px;
+                transition: transform 0.3s, fill 0.3s; /* Transition for fill color and transform */
+            }
+            .slice:hover {
+                transform: scale(1.1);
+                cursor: pointer;
+                fill: orange; /* Color change on hover */
+            }
+        </style>
+    </head>
+    <body class="is-preload">
+        <!-- Wrapper -->
+        <div id="wrapper">
+            <!-- Intro -->
+            <section id="intro" class="wrapper style1 fullscreen fade-up">
+                <div class="inner">
+                    <h1>Visualizing Police Shootings Across the United States</h1>
+                    <p>In the United States, it's estimated that police officers fatally shoot over 1,000 individuals each year. Since 2015, there have been approximately 10,000 instances of police-involved shootings. There is no mandate for local police departments to report these incidents to higher authorities, leading to a significant lack of accountability. Recognizing the importance of transparent information in this area, the Washington Post has meticulously documented each person shot and killed by police officers since 2015. Dive into the data below to explore further.</p>
+                    <p>By Riya Mathur</p>
+                    <ul class="actions">
+                        <li><a href="#one" class="button scrolly">Explore</a></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- One -->
+            <section id="one" class="wrapper style2 spotlights">
+                <section>
+                    <div class="content">
+                        <div class="inner">
+                            <h2>Police Shootings from 2015-2024</h2>
+                            <p>Below is a visualization of police shootings across multiple years.</p>
+                            <div id="my_dataviz"></div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+			<!-- Bar Chart Visualizations -->
+				<section id="four" class="wrapper style2 spotlights">
+					<div class="content">
 						<div class="inner">
-							<h1>Visualizing Police Shootings Across the United States</h1>
-							<p>In the United States, it's estimated that police officers fatally shoot over 1,000 individuals each year. Since 2015, there have been approximately 10,000 instances of police-involved shootings. There is no mandate for local police departments to report these incidents to higher authorities, leading to a significant lack of accountability. Recognizing the importance of transparent information in this area, the Washington Post has meticulously documented each person shot and killed by police officers since 2015. Dive into the data below to explore further.</a>.</p>
-							<p>By Riya Mathur</p>
-							<ul class="actions">
-								<li><a href="#one" class="button scrolly">Explore</a></li>
-							</ul>
+							<h2>Do Age and Race factor into police shootings?</h2>
+							<p>These bar charts depict the age/race distributions of the victims of these police shootings.</p>
+							<div id="raceChart"><h3>Race Distribution</h3></div>
+							<div id="ageChart"><h3>Age Distribution</h3></div>
+							<div class="tooltip tooltip-bar" id="tooltip-bar"></div>
 						</div>
-					</section>
+					</div>
+				</section>
+			</div>
 
-				<!-- One -->
-					<section id="one" class="wrapper style2 spotlights">
-						<section>
-							<a href="#" class="image"><img src="images/pic01.jpg" alt="" data-position="center center" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Visualization</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-								</div>
-							</div>
-						</section>
-						<section>
-							<a href="#" class="image"><img src="images/pic02.jpg" alt="" data-position="top center" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Visualization</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-								</div>
-							</div>
-						</section>
-						<section>
-							<a href="#" class="image"><img src="images/pic03.jpg" alt="" data-position="25% 25%" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Visualization</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-								</div>
-							</div>
-						</section>
-						<section>
-							<a href="#" class="image"><img src="images/pic03.jpg" alt="" data-position="25% 25%" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Visualization</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-								</div>
-							</div>
-						</section>
-					</section>
+            <!-- Pie Chart Visualizations -->
+            <section id="three" class="wrapper style2 spotlights">
+                <div class="content">
+                    <div class="inner">
+                        <h2>Other factors involved</h2>
+                        <div id="genderPieChart" class="chart-container"><h3>Gender Distribution</h3></div>
+                        <div id="armedPieChart" class="chart-container"><h3>Armed Status</h3></div>
+                        <div id="fleePieChart" class="chart-container"><h3>Fleeing Status</h3></div>
+                        <div id="mentalIllnessPieChart" class="chart-container"><h3>Signs of Mental Illness</h3></div>
+                        <div class="tooltip tooltip-pie" id="tooltip"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
 
-				<!-- Two -->
-					<section id="two" class="wrapper style3 fade-up">
-						<div class="inner">
-							<h2>Geospatial Map Here</h2>
-							<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus, lacus eget hendrerit bibendum, urna est aliquam sem, sit amet imperdiet est velit quis lorem.</p>
-							<div class="features">
-							</div>
-						</div>
-					</section>
-
-		<!-- Footer -->
-			<footer id="footer" class="wrapper style1-alt">
-				<div class="inner">
-					<ul class="menu">
-						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-					</ul>
+		<!-- choropleth Map -->
+		<section id="two" class="wrapper style3 fade-up">
+			<div class="inner">
+				<h2></h2>
+				<img src="images/choropleth.png" alt="Geospatial Map of Police Shootings" style="max-width:100%; height:auto;">
+				<div class="features">
 				</div>
-			</footer>
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+			</div>
+		</section>
+        <!-- Footer -->
+        <footer id="footer" the.wrapper style1-alt">
+            <div class="inner">
+                <ul class="menu">
+                    <li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+                </ul>
+            </div>
+        </footer>
+        <!-- Scripts -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/jquery.scrollex.min.js"></script>
+        <script src="assets/js/jquery.scrolly.min.js"></script>
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/util.js"></script>
+        <script src="assets/js/main.js"></script>
+        <!-- D3 Visualization Script for Line Chart -->
+        <script>
+            var margin = { top: 40, right: 20, bottom: 70, left: 70 },
+                svgWidth = 540,
+                svgHeight = 300,
+                width = svgWidth - margin.left - margin.right,
+                height = svgHeight - margin.top - margin.bottom;
+            var parseDate = d3.timeParse("%Y-%m-%d");
+            var tooltip = d3.select("body").append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+            d3.csv("shootings.csv").then(function(data) {
+                data.forEach(function(d) {
+                    d.parsedDate = parseDate(d.date);
+                    d.month = d.parsedDate.getMonth();
+                    d.year = d.parsedDate.getFullYear();
+                });
+                var yearMonthCounts = d3.rollups(data, 
+                                                 v => v.length, 
+                                                 d => d.year, 
+                                                 d => d.month);
+                var maxY = d3.max(yearMonthCounts, year => d3.max(year[1], month => month[1]));
+                var x = d3.scaleTime()
+                    .domain([new Date(2015, 0, 1), new Date(2015, 11, 31)])
+                    .range([0, width]);
+                var y = d3.scaleLinear()
+                    .domain([0, maxY])
+                    .range([height, 0]);
+                var line = d3.line()
+                    .x(function(d) { return x(new Date(2015, d[0], 1)); })
+                    .y(function(d) { return y(d[1]); });
+                var svg = d3.select("#my_dataviz").selectAll(".svg-container")
+                    .data(yearMonthCounts)
+                    .join("div")
+                    .attr("class", "svg-container")
+                    .append("svg")
+                        .attr("width", svgWidth)
+                        .attr("height", svgHeight)
+                    .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                svg.each(function(d) {
+                    var year = d[0];
+                    var countsByMonth = d[1];
+                    var svg = d3.select(this);
+                    svg.append("g")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(d3.axisBottom(x)
+                                .ticks(d3.timeMonth.every(1))
+                                .tickFormat(d3.timeFormat("%b"))
+                                .tickSizeOuter(0))
+                        .append("text")
+                          .attr("class", "axis-label")
+                          .attr("x", width - 6)
+                          .attr("y", margin.bottom - 10)
+                          .style("text-anchor", "end")
+                          .text("Month");
+                    svg.append("g")
+                        .call(d3.axisLeft(y).ticks(3))
+                        .append("text")
+                          .attr("class", "axis-label")
+                          .attr("transform", "rotate(-90)")
+                          .attr("x", -6)
+                          .attr("y", 6)
+                          .attr("dy", ".71em")
+                          .style("text-anchor", "end")
+                          .text("Shootings");
+                    svg.append("path")
+                        .datum(countsByMonth)
+                        .attr("class", "line")
+                        .attr("d", line);
+                    svg.selectAll(".dot")
+                        .data(countsByMonth)
+                        .enter().append("circle")
+                          .attr("class", "dot")
+                          .attr("r", 4)
+                          .attr("cx", function(d) { return x(new Date(2015, d[0], 1)); })
+                          .attr("cy", function(d) { return y(d[1]); })
+                          .on("mouseover", function(event, d) {
+                            tooltip.transition()
+                              .duration(200)
+                              .style("opacity", .9);
+                            tooltip.html(d[1] + " shootings")
+                              .style("left", (event.pageX) + "px")
+                              .style("top", (event.pageY - 28) + "px");
+                          })
+                          .on("mouseout", function(d) {
+                            tooltip.transition()
+                              .duration(500)
+                              .style("opacity", 0);
+                          });
+                    svg.append("text")
+                        .attr("class", "title")
+                        .attr("x", width/2)
+                        .attr("y", -20)
+                        .attr("text-anchor", "middle")
+                        .text(year);
+                });
+            }).catch(function(error) {
+                console.error(error);
+            });
+        </script>
+        <!-- D3 Visualization Script for Pie Charts -->
+        <script>
+          const colorPalette = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b'];
 
-	</body>
+          const genderData = [
+            { label: "Male", value: 9027 },
+            { label: "Female", value: 416 }
+          ];
+          const armedData = [
+            { label: "Armed", value: 8936 },
+            { label: "Unarmed", value: 537 }
+          ];
+          const fleeData = [
+            { label: "Not fleeing", value: 5087 },
+            { label: "Car", value: 1501 },
+            { label: "Foot", value: 1242 },
+            { label: "Other", value: 351 }
+          ];
+          const mentalIllnessData = [
+            { label: "No signs", value: 7583 },
+            { label: "Signs present", value: 1890 }
+          ];
+
+          function drawPieChart(data, elementId, colors) {
+            const width = 500;
+            const height = 500;
+            const radius = Math.min(width, height) / 2 - 40; 
+
+            const svg = d3.select(elementId)
+              .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+              .append("g")
+                .attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+            const pie = d3.pie().value(d => d.value).sort(null);
+            const arc = d3.arc().innerRadius(0).outerRadius(radius);
+
+            const tooltip = d3.select('#tooltip');
+
+            svg
+              .selectAll('path')
+              .data(pie(data))
+              .join('path')
+              .attr('d', arc)
+              .attr('class', 'slice')
+              .attr('fill', (d, i) => colors[i % colors.length])
+              .on('mouseover', function(event, d) {
+                tooltip
+                  .style('opacity', 1)
+                  .html(`Number of victims: ${d.data.value}`)
+                  .style('left', `${event.pageX + 10}px`)
+                  .style('top', `${event.pageY + 10}px`);
+              })
+              .on('mouseout', function() {
+                tooltip.style('opacity', 0);
+              });
+
+            // Labels inside slices
+            svg
+              .selectAll('text')
+              .data(pie(data))
+              .join('text')
+              .text(d => `${d.data.label}: ${d.data.value}`)
+              .attr('transform', d => `translate(${arc.centroid(d)})`)
+              .attr('dy', '0.35em')
+              .attr('text-anchor', 'middle')
+              .style('fill', 'white');
+          }
+
+          // Drawing the pie charts for each dataset
+          drawPieChart(genderData, '#genderPieChart', colorPalette);
+          drawPieChart(armedData, '#armedPieChart', colorPalette);
+          drawPieChart(fleeData, '#fleePieChart', colorPalette);
+          drawPieChart(mentalIllnessData, '#mentalIllnessPieChart', colorPalette);
+
+
+		//   D3 Visualizations for Bar Charts
+            var raceData = [
+                {race: "White", count: 4261},
+                {race: "Black", count: 2226},
+                {race: "Hispanic", count: 1536},
+                {race: "Asian", count: 166},
+                {race: "Native American", count: 127},
+                {race: "Other", count: 29}
+            ];
+
+            var ageData = [
+                {age_range: "0-18", count: 303},
+                {age_range: "19-30", count: 2781},
+                {age_range: "31-45", count: 3738},
+                {age_range: "46-60", count: 1747},
+                {age_range: "61-75", count: 446},
+                {age_range: "76-100", count: 68}
+            ];
+
+            function createBarChart(data, elementId, xValue, yValue) {
+                var margin = {top: 20, right: 20, bottom: 50, left: 60},
+                    width = 700 - margin.left - margin.right,
+                    height = 500 - margin.top - margin.bottom;
+
+                var svg = d3.select(elementId)
+                    .append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+                var x = d3.scaleBand()
+                    .range([0, width])
+                    .domain(data.map(d => d[xValue]))
+                    .padding(0.1);
+
+                var y = d3.scaleLinear()
+                    .domain([0, d3.max(data, d => d[yValue])])
+                    .range([height, 0]);
+
+                svg.append("g")
+                    .attr("transform", `translate(0,${height})`)
+                    .call(d3.axisBottom(x))
+                    .append("text")
+                    .attr("class", "axis-label")
+                    .attr("y", 35)
+                    .attr("x", width / 2)
+                    .attr("text-anchor", "middle")
+                    .text(xValue);
+
+                svg.append("g")
+                    .call(d3.axisLeft(y))
+                    .append("text")
+                    .attr("class", "axis-label")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", -45)
+                    .attr("x", -height / 2)
+                    .attr("text-anchor", "middle")
+                    .text("Number of Victims");
+
+                var tooltip = d3.select("#tooltip-bar");
+
+                svg.selectAll(".bar")
+                    .data(data)
+                    .join("rect")
+                    .attr("class", "bar")
+                    .attr("x", d => x(d[xValue]))
+                    .attr("y", d => y(d[yValue]))
+                    .attr("width", x.bandwidth())
+                    .attr("height", d => height - y(d[yValue]))
+                    .on("mouseover", function(event, d) {
+                        tooltip
+                            .style("opacity", 1)
+                            .html(`${xValue}: ${d[xValue]}<br>${yValue}: ${d[yValue]}`)
+                            .style("left", `${event.pageX}px`)
+                            .style("top", `${event.pageY - 28}px`);
+                    })
+                    .on("mouseout", function() {
+                        tooltip.style("opacity", 0);
+                    });
+            }
+
+            createBarChart(raceData, "#raceChart", "race", "count");
+            createBarChart(ageData, "#ageChart", "age_range", "count");
+        </script>
+    </body>
 </html>
