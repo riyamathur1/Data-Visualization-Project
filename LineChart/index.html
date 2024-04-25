@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script const url="https://gist.github.com/riyamathur1/d0d8b5a60ba91d7cba36c887f7b838af.js"></script>
+
+<style>
+
+.tooltip {
+  position: absolute;
+  text-align: center;
+  width: auto;
+  height: auto;
+  padding: 6px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* Style for the SVG container */
+.svg-container {
+  padding: 10px;
+  display: inline-block;
+  margin: 0 auto;
+}
+
+.axis-label {
+  font-weight: bold;
+}
+
+
+.line {
+  fill: none;
+  stroke: #3074b2;
+  stroke-width: 2;
+}
+
+
+.dot {
+  fill: #3074b2;
+  opacity: 0.7;
+}
+
+
+.title {
+  font-size: 16px;
+}
+</style>
+
+<div id="line"></div>
+<script>
+  // Setting the dimensions and margins of the graph
+  var margin = { top: 40, right: 20, bottom: 70, left: 70 },
+      svgWidth = 540,
+      svgHeight = 300,
+      width = svgWidth - margin.left - margin.right,
+      height = svgHeight - margin.top - margin.bottom;
+
+  // Parsing the date / time
+  var parseDate = d3.timeParse("%Y-%m-%d");
+
+  // Tooltip div
+  var tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+  // Read the data
+  d3.csv("https://gist.githubusercontent.com/riyamathur1/d0d8b5a60ba91d7cba36c887f7b838af/raw/6ad0cd417fc169df792ccc0955344c8a3f0ce2ec/2024-03-26-washington-post-police-shootings-export.csv").then(function(data) {
+
+    data.forEach(function(d) {
+      d.parsedDate = parseDate(d.date);
+      d.month = d.parsedDate.getMonth();
+      d.year = d.parsedDate.getFullYear();
+    });
+
+    // Group the data by year and month, and calculate counts
+    var yearMonthCounts = d3.rollups(data, 
+                                     v => v.length, 
+                                     d => d.year, 
+                                     d => d.month);
+
+    // Finding max value for y-axis scaling across all charts
+    var maxY = d3.max(yearMonthCounts, year => d3.max(year[1], month => month[1]));
+
+    // Creating a time scale for the x-axis
+    var x = d3.scaleTime()
+      .domain([new Date(2015, 0, 1), new Date(2015, 11, 31)]) // only need one year's range for all charts
+      .range([0, width]);
+
+ 
+    var y = d3.scaleLinear()
+      .domain([0, maxY])
+      .range([height, 0]);
+
+    // Line generator
+    var line = d3.line()
+      .x(function(d) { return x(new Date(2015, d[0], 1)); }) 
+      .y(function(d) { return y(d[1]); });
+
+    // SVG for each year
+    var svg = d3.select("#my_dataviz").selectAll(".svg-container")
+      .data(yearMonthCounts)
+      .join("div")
+      .attr("class", "svg-container")
+      .append("svg")
+        .attr("width", svgWidth)
+        .attr("height", svgHeight)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Drawing the lines and axes for each SVG
+    svg.each(function(d) {
+      var year = d[0];
+      var countsByMonth = d[1];
+      var svg = d3.select(this);
+
+      // x-axis
+      svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x)
+                .ticks(d3.timeMonth.every(1))
+                .tickFormat(d3.timeFormat("%b"))
+                .tickSizeOuter(0))
+        .append("text") // Add x-axis label
+          .attr("class", "axis-label")
+          .attr("x", width - 6)
+          .attr("y", margin.bottom - 10)
+          .style("text-anchor", "end")
+          .text("Month");
+
+      // y-axis
+      svg.append("g")
+        .call(d3.axisLeft(y).ticks(3))
+        .append("text") // Add y-axis label
+          .attr("class", "axis-label")
+          .attr("transform", "rotate(-90)")
+          .attr("x", -6)
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text("Shootings");
+
+
+      svg.append("path")
+        .datum(countsByMonth)
+        .attr("class", "line")
+        .attr("d", line);
+
+
+      svg.selectAll(".dot")
+        .data(countsByMonth)
+        .enter().append("circle")
+          .attr("class", "dot")
+          .attr("r", 4)
+          .attr("cx", function(d) { return x(new Date(2015, d[0], 1)); })
+          .attr("cy", function(d) { return y(d[1]); })
+          .on("mouseover", function(event, d) {
+            tooltip.transition()
+              .duration(200)
+              .style("opacity", .9);
+            tooltip.html(d[1] + " shootings")
+              .style("left", (event.pageX) + "px")
+              .style("top", (event.pageY - 28) + "px");
+          })
+          .on("mouseout", function(d) {
+            tooltip.transition()
+              .duration(500)
+              .style("opacity", 0);
+          });
+
+      // Adding the year as a title
+      svg.append("text")
+        .attr("class", "title")
+        .attr("x", width/2)
+        .attr("y", -20)
+        .attr("text-anchor", "middle")
+        .text(year);
+    });
+
+  }).catch(function(error) {
+    console.error(error);
+  });
+</script>

@@ -1,0 +1,438 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Police Shootings</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        /* Small multiples styles */
+        #line-chart-container .tooltip {
+            position: absolute;
+            text-align: center;
+            width: auto;
+            height: auto;
+            padding: 6px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        #line-chart-container .svg-container {
+            padding: 10px;
+            display: inline-block;
+            margin: 0 auto;
+        }
+
+        #line-chart-container .axis-label {
+            font-weight: bold;
+        }
+
+        #line-chart-container .line {
+            fill: none;
+            stroke: #3074b2;
+            stroke-width: 2;
+        }
+
+        #line-chart-container .dot {
+            fill: #3074b2;
+            opacity: 0.7;
+        }
+
+        #line-chart-container .title {
+            font-size: 16px;
+        }
+
+		/* Pie charts */
+        .chart {
+            display: inline-block;
+            position: relative;
+            width: 360px;
+            height: 360px;
+        }
+        .chart-title {
+            text-align: center;
+            font-weight: bold;
+            /* margin-top: 20px;
+			margin-bottom: 20px; */
+        }
+        .arc:hover {
+            opacity: 0.8;
+            cursor: pointer;
+        }
+        text {
+            font-size: 14px;
+            /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper" class="fade-in">
+
+        <!-- Intro -->
+        <div id="intro">
+            <h1>Visualizing Police Shootings<br />Across the United States</h1>
+			<p>By Riya Mathur</p>
+            <ul class="actions">
+                <li><a href="#header" class="button icon solid solo fa-arrow-down scrolly">Continue</a></li>
+            </ul>
+        </div>
+
+        <!-- Header -->
+        <header id="header">
+            <a href="index.html" class="logo"></a>
+        </header>
+
+        <!-- Main -->
+        <div id="main">
+
+            <!-- Small Multiples -->
+            <article class="post featured">
+                <header class="major">
+					<p>In the United States, it's estimated that police officers fatally shoot over 1,000 individuals each year. Since 2015, there have been approximately 10,000 instances of police-involved shootings. There is no mandate for local police departments to report these incidents to higher authorities, leading to a significant lack of accountability. Recognizing the importance of transparent information in this area, the Washington Post has meticulously documented each person shot and killed by police officers since 2015. Dive into the data below to explore further. </p>
+                    <p>
+
+
+						.
+
+
+					</p>
+					<h3>Police Shootings Trends Across the Years</h3>
+                </header>
+                <div id="line-chart-container"></div> 
+                <p>Over the past few years, the number of police shootings has shown an increase. Police killed the highest number of people in 2023. </p>
+            </article>
+
+
+			<!-- Bar Charts -->
+			<article class="post featured">
+				<header class="major">
+					<h3>Who are the typical victims?</h3>
+				</header>
+				<div id="raceChart" class="chart-container"><h4>Race Distribution</h4></div>
+				<p>While White Americans make up over half the victims of police shootings, <strong>African Americans are killed at a much higher rate</strong>. They account for around 14% of the population, yet are killed at over twice the rate of White Americans.</p>
+				<div id="ageChart" class="chart-container"><h4>Age Distribution</h4></div>
+				<p><strong>Most of the victims are young</strong>- over half the people shot by police in this timeframe are under 40 years old.</p>
+			
+			</article>
+
+
+			<!-- Pie Charts -->
+			<article class="post featured">
+				<header class="major">
+				</header>
+				<div id="genderChart" class="chart">
+					<div class="chart-title">Gender Distribution</div>
+				</div>
+				<div id="armedChart" class="chart">
+					<div class="chart-title">Armed Status</div>
+				</div>
+				<div id="mentalIllnessChart" class="chart">
+					<div class="chart-title">Mental Illness</div>
+				</div>
+				<p style="text-align: center;">
+					A majority of police shooting victims are male and armed, while a significant proportion show no signs of mental illness. These patterns underscore potential biases in law enforcement interactions and highlight the need for improved strategies in assessing threat levels and de-escalating encounters involving individuals with mental health issues.</p>
+
+			</article>
+
+			<!-- Choropleth Map -->
+				<article class="post featured">
+					<header class="major">
+						<h3>Police Shootings by State</h3>
+					</header>
+					<!-- Embed map -->
+					<iframe src="map.html" width="100%" height="600"></iframe>
+				</article>
+			
+
+        </div>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <!-- Footer content... -->
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+	<script>
+		// Setting the dimensions and margins of the graph
+		var margin = { top: 40, right: 20, bottom: 70, left: 70 },
+			svgWidth = 540,
+			svgHeight = 300,
+			width = svgWidth - margin.left - margin.right,
+			height = svgHeight - margin.top - margin.bottom;
+	
+		// Parse the date / time
+		var parseDate = d3.timeParse("%Y-%m-%d");
+	
+
+		var tooltip = d3.select("#body").append("div")
+			.attr("class", "tooltip")
+			.style("opacity", 0);
+	
+		// Read the data
+		d3.csv("https://gist.githubusercontent.com/riyamathur1/d0d8b5a60ba91d7cba36c887f7b838af/raw/6ad0cd417fc169df792ccc0955344c8a3f0ce2ec/2024-03-26-washington-post-police-shootings-export.csv").then(function(data) {
+			// Formatting the data
+			data.forEach(function(d) {
+				d.parsedDate = parseDate(d.date);
+				d.month = d.parsedDate.getMonth();
+				d.year = d.parsedDate.getFullYear();
+			});
+	
+			// Grouping the data by year and month, and calculating counts
+			var yearMonthCounts = d3.rollups(data,
+				v => v.length,
+				d => d.year,
+				d => d.month
+			);
+	
+			var x = d3.scaleTime()
+				.domain([new Date(2015, 0, 1), new Date(2015, 11, 31)])
+				.range([0, width]);
+	
+			var y = d3.scaleLinear()
+				.domain([0, d3.max(yearMonthCounts, function(d) { return d3.max(d[1], function(d) { return d[1]; }); })])
+				.range([height, 0]);
+	
+			var xAxis = d3.axisBottom(x)
+				.ticks(d3.timeMonth.every(1))
+				.tickFormat(d3.timeFormat("%b"));
+	
+			var yAxis = d3.axisLeft(y);
+	
+
+			var line = d3.line()
+				.x(function(d) { return x(new Date(2015, d[0], 1)); }) part
+				.y(function(d) { return y(d[1]); });
+	
+
+			var svg = d3.select("#line-chart-container").selectAll("svg")
+				.data(yearMonthCounts)
+				.enter()
+				.append("svg")
+					.attr("width", svgWidth)
+					.attr("height", svgHeight)
+				.append("g")
+					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	
+
+			svg.append("g")
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis)
+				.append("text")
+				.attr("class", "axis-label")
+				.attr("x", width)
+				.attr("y", -6)
+				.style("text-anchor", "end")
+				.text("Month");
+	
+
+			svg.append("g")
+				.call(yAxis)
+				.append("text")
+				.attr("class", "axis-label")
+				.attr("transform", "rotate(-90)")
+				.attr("y", 6)
+				.attr("dy", ".71em")
+				.style("text-anchor", "end")
+				.text("Shootings");
+	
+
+			svg.append("path")
+				.datum(function(d) { return d[1]; })
+				.attr("class", "line")
+				.attr("d", line);
+	
+
+			svg.selectAll(".dot")
+				.data(function(d) { return d[1]; })
+				.enter().append("circle")
+				.attr("class", "dot")
+				.attr("cx", function(d) { return x(new Date(2015, d[0], 1)); })
+				.attr("cy", function(d) { return y(d[1]); })
+				.attr("r", 4)
+				.on("mouseover", function(event, d) {
+					tooltip.transition()
+						.duration(200)
+						.style("opacity", .9);
+					tooltip.html("Shootings: " + d[1])
+						.style("left", (event.pageX - 34) + "px")
+						.style("top", (event.pageY - 12) + "px");
+				})
+				.on("mouseout", function(d) {
+					tooltip.transition()
+						.duration(500)
+						.style("opacity", 0);
+				});
+
+			svg.append("text")
+				.attr("x", width / 2)
+				.attr("y", 0 - (margin.top / 2))
+				.attr("text-anchor", "middle")
+				.style("font-size", "16px")
+				.style("text-decoration", "underline")
+				.text(function(d) { return d[0]; });
+		}).catch(function(error) {
+			console.log(error);
+		});
+	</script>
+	<script>
+		var raceData = [
+		{race: "White", count: 4261},
+		{race: "Black", count: 2226},
+		{race: "Hispanic", count: 1536},
+		{race: "Asian", count: 166},
+		{race: "Native American", count: 127},
+		{race: "Other", count: 29}
+		];
+
+		var ageData = [
+		{age_range: "0-18", count: 303},
+		{age_range: "19-30", count: 2781},
+		{age_range: "31-45", count: 3738},
+		{age_range: "46-60", count: 1747},
+		{age_range: "61-75", count: 446},
+		{age_range: "76-100", count: 68}
+		];
+
+		function createBarChart(data, elementId, xValue, yValue) {
+		var margin = {top: 20, right: 20, bottom: 50, left: 60},
+			width = 700 - margin.left - margin.right,
+			height = 500 - margin.top - margin.bottom;
+
+		var svg = d3.select(elementId)
+			.append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+			.attr("transform", `translate(${margin.left},${margin.top})`);
+
+		var x = d3.scaleBand()
+			.range([0, width])
+			.domain(data.map(d => d[xValue]))
+			.padding(0.1);
+
+		var y = d3.scaleLinear()
+			.domain([0, d3.max(data, d => d[yValue])])
+			.range([height, 0]);
+
+		svg.append("g")
+			.attr("transform", `translate(0,${height})`)
+			.call(d3.axisBottom(x));
+
+		svg.append("g")
+			.call(d3.axisLeft(y));
+
+		svg.selectAll(".bar")
+			.data(data)
+			.join("rect")
+			.attr("class", "bar")
+			.attr("x", d => x(d[xValue]))
+			.attr("y", d => y(d[yValue]))
+			.attr("width", x.bandwidth())
+			.attr("height", d => height - y(d[yValue]))
+			.on("mouseover", function(event, d) {
+				d3.select(".tooltip")
+					.style("opacity", 1)
+					.html(`${xValue}: ${d[xValue]}<br>${yValue}: ${d[yValue]}`)
+					.style("left", `${event.pageX}px`)
+					.style("top", `${event.pageY - 28}px`);
+			})
+			.on("mouseout", function() {
+				d3.select(".tooltip").style("opacity", 0);
+			});
+		}
+
+		createBarChart(raceData, "#raceChart", "race", "count");
+		createBarChart(ageData, "#ageChart", "age_range", "count");
+	</script>
+	<script>
+		// Pie chart scripts
+		// const tooltip = d3.select("body").append("div").attr("class", "tooltip");
+		const pieWidth = 360; // Width of the SVG
+   		const pieHeight = 360; // Height of the SVG
+        const radius = Math.min(pieWidth, pieHeight) / 2;
+
+		function drawPieChart(data, elementId, title) {
+			const svg = d3.select(elementId)
+				.append("svg")
+				.attr("width", pieWidth)
+				.attr("height", pieHeight)
+				.attr("viewBox", `-${pieWidth / 2} -${pieHeight / 2} ${pieWidth} ${pieHeight}`) 
+				.append("g");
+
+            const pie = d3.pie()
+                .sort(null)
+                .value(d => d.value);
+
+            const path = d3.arc()
+                .outerRadius(radius - 10)
+                .innerRadius(0);
+
+            const arc = svg.selectAll(".arc")
+                .data(pie(data))
+                .enter().append("g")
+                .attr("class", "arc")
+                .on("mouseover", (event, d) => {
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", 0.9);
+                    tooltip.html(`${d.data.label}: ${d.data.value}`)
+                        .style("left", (event.pageX) + "px")
+                        .style("top", (event.pageY - 28) + "px");
+                })
+                .on("mouseout", () => {
+                    tooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                });
+
+				arc.append("path")
+					.attr("d", path)
+					.attr("fill", d => d.data.label === "Male" || d.data.label === "Armed" || d.data.label === "No signs" ? "#1f77b4" : "#000000");
+
+				arc.append("text")
+					.attr("transform", d => "translate(" + path.centroid(d) + ")")
+					.attr("dy", "0.35em")
+					.attr("text-anchor", "middle")
+					.text(d => d.data.value > 1000 ? d.data.label : "")
+					.style("fill", "#fff");
+
+			}
+
+			drawPieChart([
+				{ label: "Male", value: 9027 },
+				{ label: "Female", value: 416 }
+			], "#genderChart", "Gender Distribution");
+
+			drawPieChart([
+				{ label: "Armed", value: 8936 },
+				{ label: "Unarmed", value: 537 }
+			], "#armedChart", "Armed Status");
+
+			drawPieChart([
+				{ label: "No signs", value: 7583 },
+				{ label: "Signs present", value: 1890 }
+			], "#mentalIllnessChart", "Mental Illness");
+
+	</script>
+	
+</body>
+</html>
