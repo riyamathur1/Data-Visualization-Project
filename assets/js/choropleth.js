@@ -107,12 +107,7 @@
                     .type(d3.annotationLabel)
                     .annotations(annotations)
                     .textWrap(130)
-                    .on('subjectover', function(annotation) {
-                        annotation.noteBg.style('fill', 'yellow');
-                    })
-                    .on('subjectout', function(annotation) {
-                        annotation.noteBg.style('fill', 'white');
-                    });
+
 
                 svg.append("g")
                     .attr("class", "annotation-group")

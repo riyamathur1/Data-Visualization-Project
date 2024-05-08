@@ -92,10 +92,13 @@
           .attr("cx", function(d) { return x(d.month) + x.bandwidth() / 2; })
           .attr("cy", function(d) { return y(d.value); })
           .attr("r", 5)
+          .attr("fill", "steelblue")
           .on('mouseenter', function(event, d) {
               tippy(event.target, {
                   content: `${d.value} shootings in ${d.month}`,
                   allowHTML: true,
+                  theme: 'red',
+                  animation: 'scale-extreme',
                   arrow: true,
                   placement: 'top'
               }).show();

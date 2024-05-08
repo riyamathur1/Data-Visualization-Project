@@ -38,7 +38,8 @@
         .attr('y', d => yScale(d.race))
         .attr('width', d => xScale(d.value))
         .attr('height', yScale.bandwidth())
-        .attr('fill', 'black');
+        .attr('fill', 'steelblue')
+        .attr('class', 'bar');
 
     // Attach Tippy.js tooltips to bars
     bars.each(function(d) {
@@ -68,7 +69,7 @@
     svg.append("text")
         .attr("transform", `translate(${chartWidth / 2}, ${(height - 5)})`)
         .style("text-anchor", "middle")
-        .style("font-size", "20px") // Larger font size for X axis label
+        .style("font-size", "18px") // Larger font size for X axis label
         .style("font-weight", "bold")
         .text("Killings per million per year");
 
@@ -78,7 +79,7 @@
         .attr("y", 20)
         .attr("x", -(height / 2))
         .style("text-anchor", "middle")
-        .style("font-size", "20px") // Larger font size for Y axis label
+        .style("font-size", "18px") // Larger font size for Y axis label
         .style("font-weight", "bold")
         .text("Race");
 })();

@@ -1,6 +1,6 @@
 
-        var width = 350; // Adjust width to fit within the container
-        var height = 350; // Adjust height to match width for a square aspect ratio
+        var width = 250;
+        var height = 250;
         var radius = Math.min(width, height) / 2;
 
         function drawPieChart(data, elementId) {
@@ -22,9 +22,11 @@
 
             arcs.append("path")
                 .attr("d", path)
-                .attr("fill", (d, i) => ['#1f77b4', '#ff7f0e'][i % 2]);
+                .attr("fill", (d, i) => ['steelblue', 'darkblue'][i % 2]);
+                
 
             arcs.append("text")
+                
                 .attr("transform", d => `translate(${label.centroid(d)})`)
                 .attr("dy", "0.35em")
                 .text(d => `${d.data.label}: ${d.data.value}`)
@@ -33,6 +35,7 @@
                 .style("fill", "white");
 
             arcs.selectAll("path")
+                .attr("class", "pie")
                 .each(function(d) {
                     tippy(this, {
                         content: `${d.data.label}: ${d.data.value}`,
@@ -54,6 +57,6 @@
 
         drawPieChart([
             { label: "No signs", value: 7583 },
-            { label: "Signs present", value: 1890 }
+            { label: "Signs", value: 1890 }
         ], "#mentalIllnessChart");
 

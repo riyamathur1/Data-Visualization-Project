@@ -3234,7 +3234,6 @@ input, select, textarea {
 			left: 0;
 			width: 100%;
 			height: 100%;
-			background-color: #212931;
 			background-image: url("../../images/overlay.png"), linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url("../../images/bg.jpg");
 			background-size: auto,								auto,														100% auto;
 			background-position: center,								center,														top center;
@@ -3242,6 +3241,8 @@ input, select, textarea {
 			background-attachment: scroll,								scroll,														scroll;
 			z-index: -1;
 		}
+
+
 
 			#wrapper > .bg.fixed {
 				position: fixed;

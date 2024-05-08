@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function() {
     svg.append("text")
         .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 20) + ")")
         .style("text-anchor", "middle")
-        .style("font-size", "20px")
+        .style("font-size", "18px")
         .style("font-weight", "bold")
         .text("Age Range");
 
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .style("font-size", "20px")
+        .style("font-size", "18px")
         .style("font-weight", "bold")
         .text("Number of Victims");
 });

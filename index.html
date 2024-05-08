@@ -22,7 +22,6 @@
         .svg-containerx {
                 display: inline-flex;
                 width: calc(34% - 8px);
-                /* height: 260px; */
                 padding: 1px;
                 vertical-align: top;
                 margin-top: 5px;
@@ -45,11 +44,11 @@
         }
         .linex {
                 fill: none;
-                stroke: #3074b2;
+                stroke: steelblue;
                 stroke-width: 2.5;
         }
         .dotx {
-                fill: #3074b2;
+                fill: steelblue;
                 opacity: 0.7;
         }
         .titlex {
@@ -66,7 +65,7 @@
         }
 
         .bar:hover {
-            fill: darkblue;
+            fill: rgba(238, 64, 64, 1);
         }
         .axis--x path,
         .axis--x line,
@@ -95,35 +94,38 @@
         .body {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-around;
-            margin: 0;
+            justify-content: space-between;
+            margin: 0 auto;
             padding: 20px;
             background: #f4f4f4;
+            max-width: 960px;
+            width: 100%;
         }
-        .chart {
-            flex: 1 1 30%; 
-            min-width: 400px;
-            height: 400px;
-            margin: 10px;
+        #pieChartsContainer {
             display: flex;
-            flex-direction: row;
+            justify-content: space-around;
             align-items: center;
-            justify-content: center;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .chart-container {
+            flex: 1 1 30%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
         }
         .chart-title {
+            margin-bottom: 10px;
             font-size: 16px;
             font-weight: bold;
-            margin-bottom: 20px;
         }
-        .arc path {
-            transition: transform 0.2s;
+        .pie:hover {
+            fill: rgba(238, 64, 64, 1);
         }
-        .arc:hover path {
-            transform: scale(1.1);
-        }
+ 
+
+
+
+
 
         /* Choropleth */
         .state {
@@ -173,15 +175,17 @@
             <!-- Small Multiples -->
             <article class="post featured">
                 <header class="major">
+                    <h3>Introduction</h3>
                     <p>In the United States, it's estimated that police officers <strong>fatally shoot</strong> over <strong>1,000 individuals each year</strong>. Since 2015, there have been approximately <strong>10,000 instances of police-involved shootings</strong>. There is no mandate for local police departments to report these incidents to higher authorities, leading to a <strong>significant lack of accountability</strong>. Recognizing the importance of transparent information in this area, the <a href="https://www.washingtonpost.com/graphics/investigations/police-shootings-database/">Washington Post</a> has documented each person shot and <strong>killed</strong> by police officers since 2015. Dive into the data below to explore further.
+                        <p style="text-align: center;"><i>Note: Dataset is last updated as of March 26, 2024</i></p>  
                         <br>
-                        <br>
-                        <br>
-                        <br>
+
                     </p>
+                 
                     <h3>Police Shootings Trends Across the Years</h3>
                 </header>
-                <div id="line" style="width: 100%; max-width: 1200px;"></div>            
+                <div id="line" style="width: 100%; max-width: 1200px;"></div>  
+                <p style="text-align: center;"><br>Since the killing of George Floyd in May 2020, protests have erupted nationwide against police violence. Despite this, the data indicates that there has been no decline in such incidents since then.</p>   
             </article>
         
 
@@ -189,10 +193,9 @@
             <article class="post featured">
                 <header class="major">
                     <h3>Highest number of police shootings occurred in 2023</h3>
-                    <p><br><i>Use the dropdown menu to select different years</i></p>  
+                    <p><i>Use the dropdown menu to select different years</i></p>  
                 </header>
                 <div id="lineChartDrop"></div>   
-                       
             </article>
         
 
@@ -206,8 +209,8 @@
 
             <article class="post featured">
 				<header class="major">
-					<h3><strong>Most of the victims are young</strong></h3>
 				</header>
+                <h3><strong>Most of the victims are young</strong></h3>
 				<div id="bar2"></div>
 				<p style="text-align: center;">Over half the people shot by police in this timeframe are <strong>under 40 years old</strong>.</p>
 			</article>
@@ -218,26 +221,29 @@
 			<article class="post featured">
 				<header class="major">
 				</header>
-				<div id="genderChart">
-                    <div class="chart-titlez">Gender Distribution</div>
-				</div>
-				<div id="armedChart">
-                    <div class="chart-titlez">Armed Status</div>
-				</div>
-				<div id="mentalIllnessChart">
-                    <div class="chart-titlez">Mental Illness</div>
-				</div>
-				<p style="text-align: center;">
-					A significant number of victims <strong>showed signs of mental illness</strong>. These patterns underscore potential biases in law enforcement interactions and highlight the need for improved strategies in assessing threat levels and de-escalating encounters involving individuals with mental health issues.</p>
+                <h2>1/4 of the victims show obvious signs of mental illness</h2>
+                <div id="pieChartsContainer">
+                    <div class="chart-container" id="genderChart">
+                        <div class="chart-title">Gender Distribution</div>
+                    </div>
+                    <div class="chart-container" id="armedChart">
+                        <div class="chart-title">Armed Status</div>
+                    </div>
+                    <div class="chart-container" id="mentalIllnessChart">
+                        <div class="chart-title">Mental Illness</div>
+                    </div>
+                </div>
+            
+				<p style="text-align: center;"> <br>
+					These patterns underscore potential biases in law enforcement interactions and highlight the need for improved strategies in assessing threat levels and de-escalating encounters involving individuals with mental health issues.</p>
 
 			</article>
 
 			<!-- Choropleth Map -->
 				<article class="post featured">
 					<header class="major">
-						<h3>Police Shootings by State</h3>
 					</header>
-
+                    <h2>Police Shootings by State</h2>
                     <div id="choroplethMap">
                         <svg width="960" height="600"></svg>
                     </div>
