@@ -1,0 +1,41 @@
+/* Small Multiples */
+.tooltipx {
+    position: absolute;
+    text-align: center;
+    width: auto;
+    height: auto;
+    padding: 6px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.svg-containerx {
+    display: inline-block;
+    width: 400px; 
+    padding: 20px;
+    vertical-align: top;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+}
+
+.axis-labelx, .titlex {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.linex {
+    fill: none;
+    stroke: #3074b2;
+    stroke-width: 2.5;
+}
+
+.dotx {
+    fill: #3074b2;
+    opacity: 0.7;
+    stroke: #fff;
+    stroke-width: 1.5;
+}
