@@ -21,12 +21,23 @@
         /* Small Multiples */
         .svg-containerx {
                 display: inline-flex;
-                width: 400px;
-                height: 260px;
-                padding: 20px;
+                width: calc(34% - 8px);
+                /* height: 260px; */
+                padding: 1px;
                 vertical-align: top;
                 margin-top: 5px;
+                margin-right: 2px;
                 border: 1px solid #ccc;
+        }
+        .body {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f4f4f4;
+            max-width: 960px;
+            width: 100%
         }
         .axis-labelx {
                 font-weight: bold;
@@ -40,8 +51,6 @@
         .dotx {
                 fill: #3074b2;
                 opacity: 0.7;
-                /* stroke: #fff; */
-                /* stroke-width: 1.5; */
         }
         .titlex {
                 font-size: 12px;
@@ -59,7 +68,6 @@
         .bar:hover {
             fill: darkblue;
         }
-
         .axis--x path,
         .axis--x line,
         .axis--y path,
@@ -68,19 +76,16 @@
             stroke: #000;
             shape-rendering: crispEdges;
         }
-
         .axis--x text,
         .axis--y text {
             font: 12px sans-serif;
             fill: #333;
         }
-
         .axis-label {
             fill: #333;
             font-weight: bold;
             text-anchor: middle;
         }
-
         .chart-title {
             font-size: 16px;
             text-anchor: middle; 
@@ -96,12 +101,12 @@
             background: #f4f4f4;
         }
         .chart {
-            flex: 1 1 30%; /* Allows each chart to take up to 30% of the flex container width */
-            min-width: 400px; /* Minimum width for each chart */
-            height: 400px; /* Height of each chart */
-            margin: 10px; /* Space between charts */
+            flex: 1 1 30%; 
+            min-width: 400px;
+            height: 400px;
+            margin: 10px;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
             justify-content: center;
             background: white;
@@ -118,20 +123,6 @@
         }
         .arc:hover path {
             transform: scale(1.1);
-        }
-        .tooltip {
-            position: absolute;
-            text-align: center;
-            width: 120px;
-            height: auto;
-            padding: 8px;
-            font-size: 12px;
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s ease-out;
         }
 
         /* Choropleth */
@@ -182,7 +173,7 @@
             <!-- Small Multiples -->
             <article class="post featured">
                 <header class="major">
-                    <p>In the United States, it's estimated that police officers fatally shoot over <strong>1,000 individuals each year</strong>. Since 2015, there have been approximately <strong>10,000 instances of police-involved shootings</strong>. There is no mandate for local police departments to report these incidents to higher authorities, leading to a <strong>significant lack of accountability</strong>. Recognizing the importance of transparent information in this area, the <a href="https://www.washingtonpost.com/graphics/investigations/police-shootings-database/">Washington Post</a> has meticulously documented each person shot and killed by police officers since 2015. Dive into the data below to explore further.
+                    <p>In the United States, it's estimated that police officers <strong>fatally shoot</strong> over <strong>1,000 individuals each year</strong>. Since 2015, there have been approximately <strong>10,000 instances of police-involved shootings</strong>. There is no mandate for local police departments to report these incidents to higher authorities, leading to a <strong>significant lack of accountability</strong>. Recognizing the importance of transparent information in this area, the <a href="https://www.washingtonpost.com/graphics/investigations/police-shootings-database/">Washington Post</a> has documented each person shot and <strong>killed</strong> by police officers since 2015. Dive into the data below to explore further.
                         <br>
                         <br>
                         <br>
@@ -190,7 +181,7 @@
                     </p>
                     <h3>Police Shootings Trends Across the Years</h3>
                 </header>
-                <div id="line"></div>
+                <div id="line" style="width: 100%; max-width: 1200px;"></div>            
             </article>
         
 

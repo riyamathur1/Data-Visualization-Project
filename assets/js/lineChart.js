@@ -1,7 +1,7 @@
 (function() {
-    var margin = { top: 20, right: 30, bottom: 50, left: 60 },
-        svgWidth = 400,
-        svgHeight = 220,
+    var margin = { top: 30, right: 230, bottom: 50, left: 50 },
+        svgWidth = 520,
+        svgHeight = 230,
         width = svgWidth - margin.left - margin.right,
         height = svgHeight - margin.top - margin.bottom;
 
