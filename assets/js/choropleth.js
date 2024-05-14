@@ -1,14 +1,17 @@
-
+        // Svg dimensions
         var width = 960, height = 600;
     
+        // Select svg element in map container, then setting width and height
         var svg = d3.select("#choroplethMap svg")
             .attr("width", width)
             .attr("height", height);
     
+        // Create projection for the map centered on the USA
         var projection = d3.geoAlbersUsa()
             .translate([width / 2, height / 2])
             .scale([1000]);
     
+        // Path generator
         var path = d3.geoPath()
             .projection(projection);
     
@@ -27,19 +30,22 @@
             "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "UT": "Utah", "VT": "Vermont",
             "VA": "Virginia", "WA": "Washington", "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming"
         };
+        // Setting color scale and domain of color scale
         var colorScale = d3.scaleThreshold()
             .domain([1, 10, 50, 100, 500, 1000, 1500])
             .range(d3.schemeBlues[7]);  // One more color than the number of breaks
     
+        // Loading in GeoJson file and data
         d3.json("https://gist.githubusercontent.com/riyamathur1/9f98dfb9d5e9584e40a1c1e2fe4d3a1a/raw/cba0d8a4b615e19d3429b13d13522ba3d3004bf9/us_states.json").then(function(json) {
             d3.csv("https://gist.githubusercontent.com/riyamathur1/0e8ec3647cfc953dd52cda2226f2a5be/raw/9f334793ceae752dac8c31921f91800bfd2f0838/aggregated_shootings_by_state.csv").then(function(data) {
+                // Creating map
                 var dataMap = new Map();
                 data.forEach(d => {
                     var fullName = stateNames[d.state];
                     var value = parseInt(d.shootings);
                     dataMap.set(fullName, isNaN(value) ? 0 : value);
                 });
-    
+                // Draws states on map
                 svg.selectAll("path")
                 .data(json.features)
                 .enter()
@@ -66,7 +72,7 @@
                     .text("Police Shootings")
                     .style("font-size", "14px")
                     
-    
+                // Create legend values
                 var legendItem = legend.selectAll("rect")
                     .data(colorScale.range().map(function(color) {
                         var d = colorScale.invertExtent(color);
@@ -74,12 +80,13 @@
                     }).filter(d => d[0] !== undefined))
                     .enter().append("g")
                     .attr("transform", (d, i) => `translate(0, ${i * 25})`);
-    
+                
+                // Appending squares for legend colors
                 legendItem.append("rect")
                     .attr("width", 20)
                     .attr("height", 20)
                     .style("fill", (d) => colorScale(d[0]));
-    
+                // Legend text labels
                 legendItem.append("text")
                     .attr("x", 25)
                     .attr("y", 15)
@@ -102,20 +109,21 @@
                         dx: 60
                     }
                 ];
-
+                // Func to create annotations
                 var makeAnnotations = d3.annotation()
                     .type(d3.annotationLabel)
                     .annotations(annotations)
                     .textWrap(130)
 
-
+                // Append annotations to map
                 svg.append("g")
                     .attr("class", "annotation-group")
                     .call(makeAnnotations)
                     .style("font-family", "sans-serif")
                     .style("font-size", "14px")
                     .style("fill", "black"); 
-
+                
+                // Styling for annotation rectangles
                 svg.selectAll(".annotation rect")
                     .attr("fill", "white")
                     .attr("opacity", 0.7);
