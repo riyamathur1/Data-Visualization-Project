@@ -27,8 +27,3 @@ Ensure you have the following libraries installed:
 - **Tippy.js (v6)**
 - **d3-svg-annotation (v2.5.1)**
 
-## Setup Instructions
-1. **Clone the repository**:
-   Use the following command to explore the data and code on your local machine:
-   ```bash
-   git clone https://github.com/riyamathur1/Police-Shootings-Visualizations.git
